@@ -6,11 +6,18 @@ const generateToken = require("../utils/generateToken");
 
 // Register
 router.post("/register", async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, redirectTo } = req.body;
+
+    const emailRedirectTo = typeof redirectTo === "string" && redirectTo.trim()
+        ? redirectTo.trim()
+        : undefined;
 
     const { data, error } = await supabase.auth.signUp({
         email,
-        password
+        password,
+        options: {
+            emailRedirectTo
+        }
     });
 
     if (error) {

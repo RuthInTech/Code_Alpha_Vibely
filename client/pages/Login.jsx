@@ -1,15 +1,19 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { getApiBaseUrl } from '../src/config/api';
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+
     const handleLogin = async () => {
+        const apiBaseUrl = getApiBaseUrl();
+
         try {
             const res = await axios.post(
-                `${import.meta.env.VITE_API_URL}/api/auth/login`,
+                `${apiBaseUrl}/api/auth/login`,
                 {
                     email,
                     password
@@ -20,7 +24,12 @@ export default function Login() {
             navigate("/dashboard");
 
         } catch (err) {
-            alert(err.response?.data?.error || "Login failed");
+            const message =
+                err.response?.data?.error ||
+                err.message ||
+                `Could not reach ${apiBaseUrl}/api/auth/login`;
+
+            alert(message);
         }
     };
     return (

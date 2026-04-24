@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { getApiBaseUrl } from "../src/config/api";
 
 export default function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleRegister = async () => {
+        const apiBaseUrl = getApiBaseUrl();
+
         try {
-            const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
             const redirectTo = `${window.location.origin}/auth/callback`;
 
             await axios.post(`${apiBaseUrl}/api/auth/register`, {
@@ -21,7 +23,12 @@ export default function Register() {
 
 
         } catch (err) {
-            alert(err.response?.data?.error || "Registration failed");
+            const message =
+                err.response?.data?.error ||
+                err.message ||
+                `Could not reach ${apiBaseUrl}/api/auth/register`;
+
+            alert(message);
 
         }
     };
